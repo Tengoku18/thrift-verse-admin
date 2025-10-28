@@ -1,0 +1,65 @@
+@font-face {
+    font-family: 'Folito';
+    src: url('Folito-Light.eot');
+    src: local('Folito Light'), local('Folito-Light'),
+        url('Folito-Light.eot?#iefix') format('embedded-opentype'),
+        url('Folito-Light.woff2') format('woff2'),
+        url('Folito-Light.woff') format('woff'),
+        url('Folito-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Folito';
+    src: url('Folito-Black.eot');
+    src: local('Folito Black'), local('Folito-Black'),
+        url('Folito-Black.eot?#iefix') format('embedded-opentype'),
+        url('Folito-Black.woff2') format('woff2'),
+        url('Folito-Black.woff') format('woff'),
+        url('Folito-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Folito';
+    src: url('Folito-Regular.eot');
+    src: local('Folito Regular'), local('Folito-Regular'),
+        url('Folito-Regular.eot?#iefix') format('embedded-opentype'),
+        url('Folito-Regular.woff2') format('woff2'),
+        url('Folito-Regular.woff') format('woff'),
+        url('Folito-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Folito';
+    src: url('Folito-Medium.eot');
+    src: local('Folito Medium'), local('Folito-Medium'),
+        url('Folito-Medium.eot?#iefix') format('embedded-opentype'),
+        url('Folito-Medium.woff2') format('woff2'),
+        url('Folito-Medium.woff') format('woff'),
+        url('Folito-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Folito';
+    src: url('Folito-Bold.eot');
+    src: local('Folito Bold'), local('Folito-Bold'),
+        url('Folito-Bold.eot?#iefix') format('embedded-opentype'),
+        url('Folito-Bold.woff2') format('woff2'),
+        url('Folito-Bold.woff') format('woff'),
+        url('Folito-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
