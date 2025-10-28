@@ -1,20 +1,52 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FAF7F2;
+  --background: #F5F5F5;
   --foreground: #3B2F2F;
+
+  /* Shadcn UI variables */
+  --card: #FFFFFF;
+  --card-foreground: #3B2F2F;
+  --popover: #FFFFFF;
+  --popover-foreground: #3B2F2F;
+  --primary: #3B2F2F;
+  --primary-foreground: #FFFFFF;
+  --secondary: #D4A373;
+  --secondary-foreground: #FFFFFF;
+  --muted: #F5F5F4;
+  --muted-foreground: #737373;
+  --accent: #6B705C;
+  --accent-foreground: #FFFFFF;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #E5DDD5;
+  --input: #E5DDD5;
+  --ring: #3B2F2F;
+  --radius: 0.75rem;
+
+  /* Enhanced color palette */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-info: #3B82F6;
+  --color-purple: #8B5CF6;
+  --color-pink: #EC4899;
+  --color-teal: #14B8A6;
 }
 
 @theme inline {
-  /* Colors */
+  /* Custom Colors */
   --color-primary: #3B2F2F;
   --color-secondary: #D4A373;
-  --color-background: #FAF7F2;
+  --color-background: #F5F5F5;
   --color-surface: #FFFFFF;
-  --color-border: #C7BFB3;
+  --color-border: #E5DDD5;
   --color-muted: #C7BFB3;
   --color-accent-1: #6B705C;
   --color-accent-2: #CB997E;
+  --color-accent-3: #A5A58D;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-info: #3B82F6;
 
   /* Fonts */
   --font-sans: var(--font-nunito-sans);
@@ -25,4 +57,83 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-nunito-sans), sans-serif;
+}
+
+/* Enhanced card styles */
+.card-gradient-primary {
+  background: linear-gradient(135deg, #3B2F2F 0%, #5A4A4A 100%);
+}
+
+.card-gradient-secondary {
+  background: linear-gradient(135deg, #D4A373 0%, #E8C4A3 100%);
+}
+
+.card-gradient-accent {
+  background: linear-gradient(135deg, #6B705C 0%, #8A8F7C 100%);
+}
+
+.card-gradient-success {
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+}
+
+.card-gradient-warning {
+  background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+}
+
+.card-gradient-info {
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+}
+
+/* Hover effects */
+.hover-lift {
+  transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -8px rgba(59, 47, 47, 0.15);
+}
+
+/* Badge enhancements */
+.badge-primary {
+  background: linear-gradient(135deg, #3B2F2F 0%, #5A4A4A 100%);
+  color: white;
+  border: none;
+}
+
+.badge-secondary {
+  background: linear-gradient(135deg, #D4A373 0%, #E8C4A3 100%);
+  color: white;
+  border: none;
+}
+
+.badge-success {
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  color: white;
+  border: none;
+}
+
+/* Animated background */
+.animated-gradient {
+  background: linear-gradient(
+    -45deg,
+    #FAF7F2,
+    #F5EFE7,
+    #FDEFD9,
+    #FFF8F0
+  );
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }

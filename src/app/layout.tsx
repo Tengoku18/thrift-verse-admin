@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito_Sans } from "next/font/google";
 import localFont from "next/font/local";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const nunitoSans = Nunito_Sans({
@@ -57,6 +58,29 @@ export default function RootLayout({
         className={`${nunitoSans.variable} ${folito.variable} antialiased`}
       >
         {children}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#FFFFFF',
+              color: '#3B2F2F',
+              border: '1px solid #C7BFB3',
+            },
+            success: {
+              iconTheme: {
+                primary: '#6B705C',
+                secondary: '#FFFFFF',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#DC2626',
+                secondary: '#FFFFFF',
+              },
+            },
+          }}
+        />
       </body>
     </html>
   );

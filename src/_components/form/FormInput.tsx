@@ -1,0 +1,61 @@
+import { Input } from '@/_components/ui/input'
+import { Label } from '@/_components/ui/label'
+import { cn } from '@/lib/utils'
+import { UseFormRegister, FieldError } from 'react-hook-form'
+
+interface FormInputProps {
+  label: string
+  name: string
+  type?: string
+  placeholder?: string
+  register: UseFormRegister<any>
+  error?: FieldError
+  required?: boolean
+  disabled?: boolean
+  className?: string
+  description?: string
+}
+
+export function FormInput({
+  label,
+  name,
+  type = 'text',
+  placeholder,
+  register,
+  error,
+  required = false,
+  disabled = false,
+  className,
+  description,
+}: FormInputProps) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={name} className="text-foreground">
+        {label}
+        {required && <span className="text-destructive ml-1">*</span>}
+      </Label>
+      <Input
+        id={name}
+        type={type}
+        placeholder={placeholder}
+        {...register(name)}
+        disabled={disabled}
+        className={cn(
+          error &&
+            'border-destructive focus-visible:ring-destructive',
+          className
+        )}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={error ? `${name}-error` : undefined}
+      />
+      {description && !error && (
+        <p className="text-sm text-muted-foreground">{description}</p>
+      )}
+      {error && (
+        <p id={`${name}-error`} className="text-sm text-destructive">
+          {error.message}
+        </p>
+      )}
+    </div>
+  )
+}

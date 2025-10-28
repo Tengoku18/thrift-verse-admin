@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ThriftVerse Admin Portal
 
-## Getting Started
+A Next.js admin portal with Supabase authentication, custom theme, and shadcn/ui components.
 
-First, run the development server:
+## Features
+
+- 🔐 **Supabase Authentication** - Secure admin login with email/password
+- 🎨 **Custom Theme** - Warm, earthy color palette
+- 🔤 **Custom Fonts** - Nunito Sans (body) and Folito (headings)
+- 🧩 **shadcn/ui Components** - Pre-built, customizable UI components
+- 🛡️ **Protected Routes** - Middleware-based route protection
+- 📱 **Responsive Design** - Mobile-first responsive layouts
+
+## Setup Instructions
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Set Up Supabase Database
+
+Before running the app, you need to set up your database tables and triggers.
+
+**See the detailed guide:** [supabase/README.md](./supabase/README.md)
+
+Quick steps:
+1. Go to your Supabase project's SQL Editor
+2. Run the migration in `supabase/migrations/001_profiles_setup.sql`
+3. Create your first admin user in Authentication > Users
+4. The profile will be automatically created!
+
+### 3. Configure Environment Variables
+
+Create a `.env.local` file:
+
+```bash
+cp .env.example .env.local
+```
+
+Update with your Supabase credentials:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+ADMIN_EMAILS=admin@thriftverse.com
+```
+
+### 4. Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Custom Theme Colors
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Primary:** `#3B2F2F` (Charcoal)
+- **Secondary:** `#D4A373` (Tan)
+- **Background:** `#FAF7F2` (Cream)
+- **Accent 1:** `#6B705C` (Olive)
+- **Accent 2:** `#CB997E` (Terracotta)
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── _components/ui/     # shadcn/ui components
+├── actions/            # Server actions
+├── app/                # Pages and layouts
+├── config/             # Configuration
+├── lib/                # Utilities
+└── middleware.ts       # Route protection
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Adding shadcn Components
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npx shadcn@latest add [component-name]
+```
