@@ -59,7 +59,7 @@ export default function NewUserPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b-2 border-border bg-card/80 backdrop-blur-sm shadow-sm">
+      <header className="border-b border-border bg-card/80 backdrop-blur-sm shadow-sm">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -92,7 +92,7 @@ export default function NewUserPage() {
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Basic Information */}
-          <Card className="border-2 shadow-lg hover-lift">
+          <Card className="shadow-lg hover-lift">
             <CardHeader className="bg-gradient-to-r from-primary/5 to-secondary/5">
               <CardTitle className="font-heading text-2xl text-primary">
                 Basic Information
@@ -159,7 +159,7 @@ export default function NewUserPage() {
           </Card>
 
           {/* Additional Details */}
-          <Card className="border-2 shadow-lg hover-lift">
+          <Card className="shadow-lg hover-lift">
             <CardHeader className="bg-gradient-to-r from-accent/5 to-secondary/5">
               <CardTitle className="font-heading text-2xl text-accent">
                 Additional Details
@@ -193,7 +193,7 @@ export default function NewUserPage() {
           </Card>
 
           {/* Form Actions */}
-          <Card className="border-2 shadow-lg">
+          <Card className="shadow-lg">
             <CardContent className="pt-6">
               <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                 <Button

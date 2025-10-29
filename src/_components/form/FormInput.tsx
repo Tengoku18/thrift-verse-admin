@@ -30,9 +30,9 @@ export function FormInput({
 }: FormInputProps) {
   return (
     <div className="space-y-2">
-      <Label htmlFor={name} className="text-foreground">
+      <Label htmlFor={name}>
         {label}
-        {required && <span className="text-destructive ml-1">*</span>}
+        {required && <span className="text-red-600 ml-1">*</span>}
       </Label>
       <Input
         id={name}
@@ -42,17 +42,17 @@ export function FormInput({
         disabled={disabled}
         className={cn(
           error &&
-            'border-destructive focus-visible:ring-destructive',
+            'border-red-500 focus:ring-red-500',
           className
         )}
         aria-invalid={error ? 'true' : 'false'}
         aria-describedby={error ? `${name}-error` : undefined}
       />
       {description && !error && (
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <p className="text-sm text-gray-600">{description}</p>
       )}
       {error && (
-        <p id={`${name}-error`} className="text-sm text-destructive">
+        <p id={`${name}-error`} className="text-sm text-red-600">
           {error.message}
         </p>
       )}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { use, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
@@ -21,7 +21,12 @@ const currencyOptions = [
   { value: 'INR', label: 'INR - Indian Rupee' },
 ]
 
-export default function EditUserPage({ params }: { params: { id: string } }) {
+export default function EditUserPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = use(params)
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -39,7 +44,7 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const user = await getUserById(params.id)
+        const user = await getUserById(id)
 
         if (!user) {
           toast.error('User not found')
@@ -65,7 +70,7 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
     }
 
     loadUser()
-  }, [params.id, reset, router])
+  }, [id, reset, router])
 
   const onSubmit = async (data: UpdateUserInput) => {
     setIsSubmitting(true)
@@ -76,7 +81,7 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
       )
 
       const result = await updateUser({
-        id: params.id,
+        id: id,
         ...updates,
       })
 

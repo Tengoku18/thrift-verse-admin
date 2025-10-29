@@ -213,14 +213,14 @@ export default function UsersPage() {
         </div>
 
         {/* Users Table */}
-        <Card className="border-2 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-primary/5 to-secondary/5">
+        <Card className="shadow-lg">
+          <CardHeader>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <CardTitle className="font-heading text-2xl text-primary">
                 All Users
               </CardTitle>
               <div className="relative w-full sm:w-64">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <Input
                   type="text"
                   placeholder="Search users..."
@@ -304,28 +304,30 @@ export default function UsersPage() {
                                 <MoreVertical className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
+                            <DropdownMenuContent align="end" className="w-48">
                               <DropdownMenuItem
                                 onClick={() =>
                                   router.push(
                                     `/admin/users/${user.id}/details`
                                   )
                                 }
+                                className="cursor-pointer focus:bg-blue-50 focus:text-blue-700"
                               >
-                                <Eye className="mr-2 h-4 w-4" />
+                                <Eye className="mr-2 h-4 w-4 text-blue-600" />
                                 View Details
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() =>
                                   router.push(`/admin/users/${user.id}/edit`)
                                 }
+                                className="cursor-pointer focus:bg-secondary/10 focus:text-secondary"
                               >
-                                <Pencil className="mr-2 h-4 w-4" />
+                                <Pencil className="mr-2 h-4 w-4 text-secondary" />
                                 Edit
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 onClick={() => handleDeleteClick(user)}
-                                className="text-destructive focus:text-destructive"
+                                className="cursor-pointer text-destructive focus:bg-red-50 focus:text-destructive"
                               >
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Delete
@@ -352,7 +354,7 @@ export default function UsersPage() {
                 </div>
               ) : (
                 filteredUsers.map((user) => (
-                  <Card key={user.id} className="hover-lift border-2">
+                  <Card key={user.id} className="hover-lift">
                     <CardContent className="pt-6">
                       <div className="mb-4 flex items-center gap-3">
                         <div className="flex h-12 w-12 items-center justify-center rounded-full card-gradient-secondary text-sm font-bold text-white shadow-md">

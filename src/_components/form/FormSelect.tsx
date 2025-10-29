@@ -41,9 +41,9 @@ export function FormSelect({
 }: FormSelectProps) {
   return (
     <div className="space-y-2">
-      <Label htmlFor={name} className="text-foreground">
+      <Label htmlFor={name}>
         {label}
-        {required && <span className="text-destructive ml-1">*</span>}
+        {required && <span className="text-red-600 ml-1">*</span>}
       </Label>
       <Controller
         name={name}
@@ -56,7 +56,7 @@ export function FormSelect({
           >
             <SelectTrigger
               className={cn(
-                error && 'border-destructive focus:ring-destructive',
+                error && 'border-red-500 focus:ring-red-500',
                 className
               )}
               aria-invalid={error ? 'true' : 'false'}
@@ -75,10 +75,10 @@ export function FormSelect({
         )}
       />
       {description && !error && (
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <p className="text-sm text-gray-600">{description}</p>
       )}
       {error && (
-        <p id={`${name}-error`} className="text-sm text-destructive">
+        <p id={`${name}-error`} className="text-sm text-red-600">
           {error.message}
         </p>
       )}

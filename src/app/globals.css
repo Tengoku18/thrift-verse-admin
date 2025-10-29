@@ -19,8 +19,8 @@
   --accent-foreground: #FFFFFF;
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --border: #E5DDD5;
-  --input: #E5DDD5;
+  --border: #E8E8E8;
+  --input: #E8E8E8;
   --ring: #3B2F2F;
   --radius: 0.75rem;
 
@@ -39,7 +39,7 @@
   --color-secondary: #D4A373;
   --color-background: #F5F5F5;
   --color-surface: #FFFFFF;
-  --color-border: #E5DDD5;
+  --color-border: #E8E8E8;
   --color-muted: #C7BFB3;
   --color-accent-1: #6B705C;
   --color-accent-2: #CB997E;

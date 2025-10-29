@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/_components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/_components/ui/card'
 import { logoutAction } from '@/actions'
-import { Users, Settings, LayoutDashboard, ChevronRight } from 'lucide-react'
+import { Users, Settings, LayoutDashboard, ChevronRight, Package } from 'lucide-react'
 
 export default async function AdminPage() {
   const supabase = await createClient()
@@ -39,9 +39,9 @@ export default async function AdminPage() {
           </form>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Link href="/admin" className="group">
-            <Card className="hover-lift transition-all border-2 hover:border-primary hover:shadow-xl">
+            <Card className="hover-lift transition-all hover:border-primary hover:shadow-xl">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex h-14 w-14 items-center justify-center rounded-xl card-gradient-primary shadow-lg">
@@ -60,7 +60,7 @@ export default async function AdminPage() {
           </Link>
 
           <Link href="/admin/users" className="group">
-            <Card className="hover-lift transition-all border-2 hover:border-secondary hover:shadow-xl">
+            <Card className="hover-lift transition-all hover:border-secondary hover:shadow-xl">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex h-14 w-14 items-center justify-center rounded-xl card-gradient-secondary shadow-lg">
@@ -78,8 +78,27 @@ export default async function AdminPage() {
             </Card>
           </Link>
 
+          <Link href="/admin/products" className="group">
+            <Card className="hover-lift transition-all hover:border-blue-500 hover:shadow-xl">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-xl card-gradient-info shadow-lg">
+                    <Package className="h-7 w-7 text-white" />
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-2 group-hover:text-blue-500" />
+                </div>
+                <CardTitle className="font-heading text-2xl text-blue-600 mt-4">
+                  Products
+                </CardTitle>
+                <CardDescription className="text-base">
+                  Manage product listings and inventory
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+
           <Link href="/admin/settings" className="group">
-            <Card className="hover-lift transition-all border-2 hover:border-accent hover:shadow-xl">
+            <Card className="hover-lift transition-all hover:border-accent hover:shadow-xl">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex h-14 w-14 items-center justify-center rounded-xl card-gradient-accent shadow-lg">

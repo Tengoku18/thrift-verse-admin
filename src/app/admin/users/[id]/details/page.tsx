@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { use, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { getUserById, deleteUser } from '@/actions'
@@ -21,7 +21,12 @@ import type { Profile } from '@/types'
 
 type UserWithEmail = Profile & { email: string | null }
 
-export default function UserDetailsPage({ params }: { params: { id: string } }) {
+export default function UserDetailsPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = use(params)
   const router = useRouter()
   const [user, setUser] = useState<UserWithEmail | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -31,7 +36,7 @@ export default function UserDetailsPage({ params }: { params: { id: string } }) 
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const userData = await getUserById(params.id)
+        const userData = await getUserById(id)
 
         if (!userData) {
           toast.error('User not found')
@@ -50,7 +55,7 @@ export default function UserDetailsPage({ params }: { params: { id: string } }) 
     }
 
     loadUser()
-  }, [params.id, router])
+  }, [id, router])
 
   const handleDelete = async () => {
     if (!user) return
