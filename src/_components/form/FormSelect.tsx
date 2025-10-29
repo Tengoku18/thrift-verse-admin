@@ -7,7 +7,7 @@ import {
 } from '@/_components/ui/select'
 import { Label } from '@/_components/ui/label'
 import { cn } from '@/lib/utils'
-import { Control, Controller, FieldError } from 'react-hook-form'
+import { Control, Controller } from 'react-hook-form'
 
 interface SelectOption {
   value: string
@@ -20,7 +20,7 @@ interface FormSelectProps {
   options: SelectOption[]
   placeholder?: string
   control: Control<any>
-  error?: FieldError
+  error?: { message?: string }
   required?: boolean
   disabled?: boolean
   className?: string

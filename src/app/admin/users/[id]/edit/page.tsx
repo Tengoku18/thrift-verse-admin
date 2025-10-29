@@ -38,7 +38,7 @@ export default function EditUserPage({
     reset,
     formState: { errors },
   } = useForm<UpdateUserInput>({
-    resolver: yupResolver(updateUserSchema),
+    resolver: yupResolver(updateUserSchema) as any,
   })
 
   useEffect(() => {

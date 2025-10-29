@@ -65,41 +65,41 @@ export const createProductSchema = yup.object({
 
 // Update product validation schema (all fields optional)
 export const updateProductSchema = yup.object({
-  store_id: yup.string().uuid('Invalid store owner ID').optional(),
+  store_id: yup.string().uuid('Invalid store owner ID').notRequired(),
   title: yup
     .string()
     .min(3, 'Title must be at least 3 characters')
     .max(200, 'Title must be less than 200 characters')
-    .optional(),
+    .notRequired(),
   description: yup
     .string()
     .max(2000, 'Description must be less than 2000 characters')
-    .optional()
-    .nullable(),
+    .nullable()
+    .notRequired(),
   category: yup
     .string()
     .oneOf(PRODUCT_CATEGORIES as unknown as string[], 'Invalid category')
-    .optional(),
+    .notRequired(),
   price: yup
     .number()
     .positive('Price must be a positive number')
     .min(0, 'Price must be greater than or equal to 0')
     .max(999999.99, 'Price is too high')
-    .optional(),
-  cover_image: yup.string().url('Cover image must be a valid URL').optional(),
+    .notRequired(),
+  cover_image: yup.string().url('Cover image must be a valid URL').notRequired(),
   other_images: yup
     .array()
     .of(yup.string().url('Each image must be a valid URL'))
-    .optional(),
+    .notRequired(),
   availability_count: yup
     .number()
     .integer('Availability count must be an integer')
     .min(0, 'Availability count cannot be negative')
-    .optional(),
+    .notRequired(),
   status: yup
     .string()
     .oneOf(PRODUCT_STATUSES as unknown as string[], 'Invalid status')
-    .optional(),
+    .notRequired(),
 })
 
 // TypeScript types inferred from schemas

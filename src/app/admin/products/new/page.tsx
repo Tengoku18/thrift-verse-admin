@@ -47,7 +47,7 @@ export default function NewProductPage() {
     formState: { errors },
     watch,
   } = useForm<CreateProductInput>({
-    resolver: yupResolver(createProductSchema),
+    resolver: yupResolver(createProductSchema) as any,
     defaultValues: {
       status: 'available',
       availability_count: 0,

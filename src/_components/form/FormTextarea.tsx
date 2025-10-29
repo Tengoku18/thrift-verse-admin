@@ -1,14 +1,14 @@
 import { Textarea } from '@/_components/ui/textarea'
 import { Label } from '@/_components/ui/label'
 import { cn } from '@/lib/utils'
-import { UseFormRegister, FieldError } from 'react-hook-form'
+import { UseFormRegister } from 'react-hook-form'
 
 interface FormTextareaProps {
   label: string
   name: string
   placeholder?: string
   register: UseFormRegister<any>
-  error?: FieldError
+  error?: { message?: string }
   required?: boolean
   disabled?: boolean
   rows?: number

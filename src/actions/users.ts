@@ -16,8 +16,8 @@ interface CreateUserParams {
   name: string
   store_username: string
   currency: string
-  bio?: string
-  profile_image?: string
+  bio?: string | null
+  profile_image?: string | null
 }
 
 interface UpdateUserParams {
@@ -26,8 +26,8 @@ interface UpdateUserParams {
   store_username?: string
   email?: string
   currency?: string
-  bio?: string
-  profile_image?: string
+  bio?: string | null
+  profile_image?: string | null
 }
 
 /**

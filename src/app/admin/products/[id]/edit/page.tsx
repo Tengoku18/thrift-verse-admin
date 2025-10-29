@@ -52,8 +52,8 @@ export default function EditProductPage({
     control,
     reset,
     formState: { errors },
-  } = useForm<UpdateProductInput>({
-    resolver: yupResolver(updateProductSchema),
+  } = useForm({
+    resolver: yupResolver(updateProductSchema) as any,
   })
 
   useEffect(() => {

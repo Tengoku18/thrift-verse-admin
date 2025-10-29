@@ -31,7 +31,7 @@ export default function NewUserPage() {
     control,
     formState: { errors },
   } = useForm<CreateUserInput>({
-    resolver: yupResolver(createUserSchema),
+    resolver: yupResolver(createUserSchema) as any,
     defaultValues: {
       currency: 'NPR',
     },

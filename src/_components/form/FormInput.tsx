@@ -1,15 +1,16 @@
 import { Input } from '@/_components/ui/input'
 import { Label } from '@/_components/ui/label'
 import { cn } from '@/lib/utils'
-import { UseFormRegister, FieldError } from 'react-hook-form'
+import { UseFormRegister } from 'react-hook-form'
 
 interface FormInputProps {
   label: string
   name: string
   type?: string
+  step?: string
   placeholder?: string
   register: UseFormRegister<any>
-  error?: FieldError
+  error?: { message?: string }
   required?: boolean
   disabled?: boolean
   className?: string
@@ -20,6 +21,7 @@ export function FormInput({
   label,
   name,
   type = 'text',
+  step,
   placeholder,
   register,
   error,
@@ -37,6 +39,7 @@ export function FormInput({
       <Input
         id={name}
         type={type}
+        step={step}
         placeholder={placeholder}
         {...register(name)}
         disabled={disabled}
