@@ -28,6 +28,7 @@ import {
   Image as ImageIcon,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { formatPrice } from '@/lib/utils/currency'
 import type { ProductWithStore } from '@/types'
 import Image from 'next/image'
 
@@ -269,7 +270,7 @@ export default function ProductDetailsPage({
                   <p className="text-sm font-medium text-gray-600">Price</p>
                 </div>
                 <p className="text-2xl font-bold text-gray-900">
-                  ${product.price.toFixed(2)}
+                  {formatPrice(product.price, product.store?.currency || 'USD')}
                 </p>
               </div>
 

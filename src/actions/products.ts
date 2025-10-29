@@ -30,7 +30,8 @@ export async function getProducts(params?: {
       store:profiles!store_id (
         id,
         name,
-        store_username
+        store_username,
+        currency
       )
     `,
       { count: 'exact' }
@@ -89,7 +90,8 @@ export async function getProductById(
       store:profiles!store_id (
         id,
         name,
-        store_username
+        store_username,
+        currency
       )
     `
     )

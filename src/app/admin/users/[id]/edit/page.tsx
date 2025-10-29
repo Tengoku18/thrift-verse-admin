@@ -10,6 +10,7 @@ import { getUserById, updateUser } from '@/actions'
 import { Button } from '@/_components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/_components/ui/card'
 import { FormInput, FormTextarea, FormSelect } from '@/_components/form'
+import { FormImageUpload } from '@/_components/form/FormImageUpload'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -227,14 +228,13 @@ export default function EditUserPage({
                 description="Maximum 500 characters"
               />
 
-              <FormInput
-                label="Profile Image URL"
+              <FormImageUpload
                 name="profile_image"
-                type="url"
-                placeholder="https://example.com/image.jpg"
-                register={register}
-                error={errors.profile_image}
-                description="Enter a valid image URL"
+                control={control}
+                label="Profile Image"
+                bucket="profiles"
+                folder="profiles"
+                hint="Upload profile image (PNG, JPG, GIF up to 5MB)"
               />
             </CardContent>
           </Card>

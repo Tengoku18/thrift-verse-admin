@@ -19,10 +19,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/_components/ui/card'
-import { FormInput, FormTextarea, FormSelect } from '@/_components/form'
-import { FormImageUpload } from '@/_components/form/FormImageUpload'
+import { FormInput, FormTextarea, FormSelect, FormImageUpload, FormMultipleImageUpload } from '@/_components/form'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { getCurrencySymbol } from '@/lib/utils/currency'
 
 const categoryOptions = PRODUCT_CATEGORIES.map((cat) => ({
   value: cat,
@@ -38,6 +38,7 @@ export default function NewProductPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [users, setUsers] = useState<Array<{ value: string; label: string }>>([])
+  const [usersData, setUsersData] = useState<Array<{ id: string; currency: string }>>([])
   const [loadingUsers, setLoadingUsers] = useState(true)
 
   const {
@@ -56,6 +57,11 @@ export default function NewProductPage() {
     },
   })
 
+  // Watch the selected store_id
+  const selectedStoreId = watch('store_id')
+  const selectedUser = usersData.find((user) => user.id === selectedStoreId)
+  const selectedCurrency = selectedUser?.currency || 'USD'
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -65,6 +71,13 @@ export default function NewProductPage() {
           label: `${user.name} (@${user.store_username})`,
         }))
         setUsers(userOptions)
+        // Store user data with currency
+        setUsersData(
+          data.map((user) => ({
+            id: user.id,
+            currency: user.currency,
+          }))
+        )
       } catch (error) {
         console.error('Failed to fetch users:', error)
         toast.error('Failed to load users')
@@ -201,7 +214,7 @@ export default function NewProductPage() {
                 />
 
                 <FormInput
-                  label="Price"
+                  label={`Price (${getCurrencySymbol(selectedCurrency)})`}
                   name="price"
                   type="number"
                   step="0.01"
@@ -209,7 +222,7 @@ export default function NewProductPage() {
                   register={register}
                   error={errors.price}
                   required
-                  description="Price in USD"
+                  description={selectedStoreId ? `Amount in ${selectedCurrency}` : 'Select a store owner first to see currency'}
                 />
               </div>
 
@@ -257,6 +270,16 @@ export default function NewProductPage() {
                 bucket="products"
                 folder="products"
                 hint="Main product image (PNG, JPG, GIF up to 5MB)"
+              />
+
+              <FormMultipleImageUpload
+                name="other_images"
+                control={control}
+                label="Additional Images"
+                bucket="products"
+                folder="products"
+                maxImages={5}
+                hint="Upload up to 5 additional product images (optional)"
               />
             </CardContent>
           </Card>

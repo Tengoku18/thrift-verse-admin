@@ -1,16 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { createUserSchema, type CreateUserInput } from '@/lib/validations/user'
-import { createUser } from '@/actions'
+import { createUser, checkUsernameAvailability } from '@/actions'
 import { Button } from '@/_components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/_components/ui/card'
 import { FormInput, FormTextarea, FormSelect } from '@/_components/form'
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import { FormImageUpload } from '@/_components/form/FormImageUpload'
+import { ArrowLeft, Loader2, CheckCircle2, XCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 const currencyOptions = [
@@ -24,11 +25,15 @@ const currencyOptions = [
 export default function NewUserPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [usernameInput, setUsernameInput] = useState('')
+  const [isCheckingUsername, setIsCheckingUsername] = useState(false)
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null)
 
   const {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm<CreateUserInput>({
     resolver: yupResolver(createUserSchema) as any,
@@ -37,7 +42,48 @@ export default function NewUserPage() {
     },
   })
 
+  // Watch the store_username field
+  const storeUsername = watch('store_username')
+
+  // Debounced username availability check
+  useEffect(() => {
+    if (!storeUsername || storeUsername.length < 3) {
+      setUsernameAvailable(null)
+      setUsernameInput(storeUsername || '')
+      return
+    }
+
+    // Update the input value
+    setUsernameInput(storeUsername)
+    setIsCheckingUsername(true)
+    setUsernameAvailable(null)
+
+    // Debounce the API call
+    const timeoutId = setTimeout(async () => {
+      try {
+        const result = await checkUsernameAvailability(storeUsername)
+        setUsernameAvailable(result.available)
+      } catch (error) {
+        console.error('Error checking username:', error)
+        setUsernameAvailable(null)
+      } finally {
+        setIsCheckingUsername(false)
+      }
+    }, 500) // 500ms delay
+
+    return () => {
+      clearTimeout(timeoutId)
+      setIsCheckingUsername(false)
+    }
+  }, [storeUsername])
+
   const onSubmit = async (data: CreateUserInput) => {
+    // Prevent submission if username is taken
+    if (usernameAvailable === false) {
+      toast.error('Please choose a different username')
+      return
+    }
+
     setIsSubmitting(true)
     try {
       const result = await createUser(data)
@@ -112,15 +158,40 @@ export default function NewUserPage() {
                   required
                 />
 
-                <FormInput
-                  label="Store Username"
-                  name="store_username"
-                  placeholder="e.g., johndoe"
-                  register={register}
-                  error={errors.store_username}
-                  required
-                  description="Lowercase letters, numbers, and underscores only"
-                />
+                <div className="space-y-2">
+                  <FormInput
+                    label="Store Username"
+                    name="store_username"
+                    placeholder="e.g., johndoe"
+                    register={register}
+                    error={errors.store_username}
+                    required
+                    description="Lowercase letters, numbers, and underscores only"
+                  />
+                  {/* Username availability feedback */}
+                  {storeUsername && storeUsername.length >= 3 && !errors.store_username && (
+                    <div className="flex items-center gap-2 text-sm mt-1">
+                      {isCheckingUsername && (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
+                          <span className="text-gray-600">Checking availability...</span>
+                        </>
+                      )}
+                      {!isCheckingUsername && usernameAvailable === true && (
+                        <>
+                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+                          <span className="text-green-600 font-medium">Username is available</span>
+                        </>
+                      )}
+                      {!isCheckingUsername && usernameAvailable === false && (
+                        <>
+                          <XCircle className="h-4 w-4 text-red-600" />
+                          <span className="text-red-600 font-medium">Username is already taken</span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <FormInput
@@ -180,14 +251,13 @@ export default function NewUserPage() {
                 description="Maximum 500 characters"
               />
 
-              <FormInput
-                label="Profile Image URL"
+              <FormImageUpload
                 name="profile_image"
-                type="url"
-                placeholder="https://example.com/image.jpg"
-                register={register}
-                error={errors.profile_image}
-                description="Enter a valid image URL"
+                control={control}
+                label="Profile Image"
+                bucket="profiles"
+                folder="profiles"
+                hint="Upload profile image (PNG, JPG, GIF up to 5MB)"
               />
             </CardContent>
           </Card>
@@ -205,7 +275,11 @@ export default function NewUserPage() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting} className="shadow-md">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || isCheckingUsername || usernameAvailable === false}
+                  className="shadow-md"
+                >
                   {isSubmitting && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}

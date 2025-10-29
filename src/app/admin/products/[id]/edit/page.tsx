@@ -19,10 +19,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/_components/ui/card'
-import { FormInput, FormTextarea, FormSelect } from '@/_components/form'
-import { FormImageUpload } from '@/_components/form/FormImageUpload'
+import { FormInput, FormTextarea, FormSelect, FormImageUpload, FormMultipleImageUpload } from '@/_components/form'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { getCurrencySymbol } from '@/lib/utils/currency'
 
 const categoryOptions = PRODUCT_CATEGORIES.map((cat) => ({
   value: cat,
@@ -45,6 +45,7 @@ export default function EditProductPage({
   const [isLoading, setIsLoading] = useState(true)
   const [users, setUsers] = useState<Array<{ value: string; label: string }>>([])
   const [loadingUsers, setLoadingUsers] = useState(true)
+  const [productCurrency, setProductCurrency] = useState<string>('USD')
 
   const {
     register,
@@ -85,6 +86,11 @@ export default function EditProductPage({
           toast.error('Product not found')
           router.push('/admin/products')
           return
+        }
+
+        // Set product currency from store owner
+        if (product.store?.currency) {
+          setProductCurrency(product.store.currency)
         }
 
         reset({
@@ -254,14 +260,14 @@ export default function EditProductPage({
                 />
 
                 <FormInput
-                  label="Price"
+                  label={`Price (${getCurrencySymbol(productCurrency)})`}
                   name="price"
                   type="number"
                   step="0.01"
                   placeholder="0.00"
                   register={register}
                   error={errors.price}
-                  description="Price in USD"
+                  description={`Amount in ${productCurrency}`}
                 />
               </div>
 
@@ -308,6 +314,16 @@ export default function EditProductPage({
                 bucket="products"
                 folder="products"
                 hint="Main product image (PNG, JPG, GIF up to 5MB)"
+              />
+
+              <FormMultipleImageUpload
+                name="other_images"
+                control={control}
+                label="Additional Images"
+                bucket="products"
+                folder="products"
+                maxImages={5}
+                hint="Upload up to 5 additional product images (optional)"
               />
             </CardContent>
           </Card>

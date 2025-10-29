@@ -177,6 +177,35 @@ export async function getUserByUsername(
 }
 
 /**
+ * Check if a store username is available
+ */
+export async function checkUsernameAvailability(
+  username: string
+): Promise<{ available: boolean }> {
+  try {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('store_username', username)
+      .maybeSingle()
+
+    if (error) {
+      console.error('Error checking username availability:', error)
+      // In case of error, assume it's not available to be safe
+      return { available: false }
+    }
+
+    // Username is available if no profile was found
+    return { available: !data }
+  } catch (error) {
+    console.error('Failed to check username availability:', error)
+    return { available: false }
+  }
+}
+
+/**
  * Create a new user with auth and profile
  */
 export async function createUser(params: CreateUserParams) {

@@ -52,6 +52,7 @@ import {
 import toast from 'react-hot-toast'
 import type { ProductWithStore } from '@/types'
 import { PRODUCT_CATEGORIES } from '@/lib/validations/product'
+import { formatPrice } from '@/lib/utils/currency'
 import Image from 'next/image'
 
 export default function ProductsPage() {
@@ -365,7 +366,7 @@ export default function ProductsPage() {
                           <Badge variant="outline">{product.category}</Badge>
                         </TableCell>
                         <TableCell className="font-semibold">
-                          ${product.price.toFixed(2)}
+                          {formatPrice(product.price, product.store?.currency || 'USD')}
                         </TableCell>
                         <TableCell>
                           <span
@@ -486,7 +487,7 @@ export default function ProductsPage() {
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Price:</span>
                           <span className="font-semibold text-foreground">
-                            ${product.price.toFixed(2)}
+                            {formatPrice(product.price, product.store?.currency || 'USD')}
                           </span>
                         </div>
                         <div className="flex justify-between">

@@ -34,7 +34,7 @@ export interface Product {
 }
 
 export interface ProductWithStore extends Product {
-  store: Pick<Profile, 'id' | 'name' | 'store_username'> | null
+  store: Pick<Profile, 'id' | 'name' | 'store_username' | 'currency'> | null
 }
 
 // Add more database types as you create more tables
