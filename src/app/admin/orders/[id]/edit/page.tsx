@@ -232,7 +232,7 @@ export default function EditOrderPage({
                 name="shipping_address.street"
                 placeholder="123 Main St"
                 register={register}
-                error={errors.shipping_address?.street}
+                error={(errors.shipping_address as any)?.street}
                 description="Street address for delivery"
               />
 
@@ -242,7 +242,7 @@ export default function EditOrderPage({
                   name="shipping_address.city"
                   placeholder="New York"
                   register={register}
-                  error={errors.shipping_address?.city}
+                  error={(errors.shipping_address as any)?.city}
                   description="City name"
                 />
 
@@ -251,7 +251,7 @@ export default function EditOrderPage({
                   name="shipping_address.state"
                   placeholder="NY"
                   register={register}
-                  error={errors.shipping_address?.state}
+                  error={(errors.shipping_address as any)?.state}
                   description="State or province"
                 />
               </div>
@@ -262,7 +262,7 @@ export default function EditOrderPage({
                   name="shipping_address.country"
                   placeholder="United States"
                   register={register}
-                  error={errors.shipping_address?.country}
+                  error={(errors.shipping_address as any)?.country}
                   description="Country name"
                 />
 
@@ -271,7 +271,7 @@ export default function EditOrderPage({
                   name="shipping_address.postal_code"
                   placeholder="10001"
                   register={register}
-                  error={errors.shipping_address?.postal_code}
+                  error={(errors.shipping_address as any)?.postal_code}
                   description="ZIP or postal code"
                 />
               </div>
