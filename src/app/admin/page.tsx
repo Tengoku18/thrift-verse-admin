@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/_components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/_components/ui/card'
 import { logoutAction } from '@/actions'
-import { Users, Settings, LayoutDashboard, ChevronRight, Package } from 'lucide-react'
+import { Users, Settings, LayoutDashboard, ChevronRight, Package, ShoppingBag } from 'lucide-react'
 
 export default async function AdminPage() {
   const supabase = await createClient()
@@ -39,7 +39,7 @@ export default async function AdminPage() {
           </form>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Link href="/admin" className="group">
             <Card className="hover-lift transition-all hover:border-primary hover:shadow-xl">
               <CardHeader>
@@ -92,6 +92,25 @@ export default async function AdminPage() {
                 </CardTitle>
                 <CardDescription className="text-base">
                   Manage product listings and inventory
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
+
+          <Link href="/admin/orders" className="group">
+            <Card className="hover-lift transition-all hover:border-green-500 hover:shadow-xl">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-xl card-gradient-success shadow-lg">
+                    <ShoppingBag className="h-7 w-7 text-white" />
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-2 group-hover:text-green-500" />
+                </div>
+                <CardTitle className="font-heading text-2xl text-green-600 mt-4">
+                  Orders
+                </CardTitle>
+                <CardDescription className="text-base">
+                  Manage customer orders and transactions
                 </CardDescription>
               </CardHeader>
             </Card>

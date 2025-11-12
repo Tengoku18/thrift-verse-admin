@@ -44,6 +44,12 @@ export const createUserSchema = yup.object({
     .url('Must be a valid URL')
     .nullable()
     .notRequired(),
+
+  address: yup
+    .string()
+    .required('Address is required')
+    .min(10, 'Address must be at least 10 characters')
+    .max(500, 'Address must not exceed 500 characters'),
 })
 
 export const updateUserSchema = yup.object({
@@ -78,6 +84,11 @@ export const updateUserSchema = yup.object({
     .url('Must be a valid URL')
     .nullable()
     .notRequired(),
+
+  address: yup
+    .string()
+    .min(10, 'Address must be at least 10 characters')
+    .max(500, 'Address must not exceed 500 characters'),
 }).partial()
 
 export type CreateUserInput = yup.InferType<typeof createUserSchema>

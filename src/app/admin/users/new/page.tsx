@@ -251,6 +251,17 @@ export default function NewUserPage() {
                 description="Maximum 500 characters"
               />
 
+              <FormTextarea
+                label="Address"
+                name="address"
+                placeholder="Enter full address..."
+                register={register}
+                error={errors.address}
+                rows={3}
+                maxLength={500}
+                description="Full address is required (minimum 10 characters)"
+              />
+
               <FormImageUpload
                 name="profile_image"
                 control={control}

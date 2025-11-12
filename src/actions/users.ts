@@ -18,6 +18,7 @@ interface CreateUserParams {
   currency: string
   bio?: string | null
   profile_image?: string | null
+  address: string
 }
 
 interface UpdateUserParams {
@@ -28,6 +29,7 @@ interface UpdateUserParams {
   currency?: string
   bio?: string | null
   profile_image?: string | null
+  address?: string
 }
 
 /**
@@ -293,6 +295,7 @@ export async function createUser(params: CreateUserParams) {
         currency: params.currency,
         bio: params.bio || null,
         profile_image: params.profile_image || null,
+        address: params.address,
       })
 
     if (profileError) {

@@ -15,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/_components/ui/dialog'
-import { ArrowLeft, Pencil, Trash2, Loader2, User, Mail, Wallet, Calendar, MessageSquare, Image } from 'lucide-react'
+import { ArrowLeft, Pencil, Trash2, Loader2, User, Mail, Wallet, Calendar, MessageSquare, Image, MapPin } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { Profile } from '@/types'
 
@@ -277,6 +277,20 @@ export default function UserDetailsPage({
                     </p>
                     <p className="mt-1 text-foreground">
                       {user.bio || 'No bio provided'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-border pt-4">
+                <div className="flex items-start gap-3">
+                  <MapPin className="mt-0.5 h-5 w-5 text-muted-foreground" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Address
+                    </p>
+                    <p className="mt-1 text-foreground">
+                      {user.address || 'No address provided'}
                     </p>
                   </div>
                 </div>

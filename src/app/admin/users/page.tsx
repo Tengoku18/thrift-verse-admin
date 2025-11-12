@@ -30,9 +30,10 @@ import {
 } from '@/_components/ui/dropdown-menu'
 import { Card, CardContent, CardHeader, CardTitle } from '@/_components/ui/card'
 import { Badge } from '@/_components/ui/badge'
-import { Search, MoreVertical, Eye, Pencil, Trash2, Plus } from 'lucide-react'
+import { Search, MoreVertical, Eye, Pencil, Trash2, Plus, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { Profile } from '@/types'
+import { copyToClipboard } from '@/lib/utils/clipboard'
 
 type User = Profile & { email: string | null }
 
@@ -284,12 +285,32 @@ export default function UsersPage() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge className="badge-primary">
-                            {user.store_username}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge className="badge-primary">
+                              {user.store_username}
+                            </Badge>
+                            <button
+                              onClick={() => copyToClipboard(user.store_username, 'Store username')}
+                              className="text-gray-400 hover:text-primary transition-colors cursor-pointer"
+                              title="Copy store username"
+                            >
+                              <Copy className="h-3 w-3" />
+                            </button>
+                          </div>
                         </TableCell>
-                        <TableCell className="max-w-[200px] truncate">
-                          {user.email || 'N/A'}
+                        <TableCell className="max-w-[200px]">
+                          <div className="flex items-center gap-2">
+                            <span className="truncate">{user.email || 'N/A'}</span>
+                            {user.email && (
+                              <button
+                                onClick={() => copyToClipboard(user.email!, 'Email')}
+                                className="text-gray-400 hover:text-primary transition-colors cursor-pointer flex-shrink-0"
+                                title="Copy email"
+                              >
+                                <Copy className="h-3 w-3" />
+                              </button>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell>
                           <Badge className="badge-success">{user.currency}</Badge>
@@ -369,18 +390,38 @@ export default function UsersPage() {
                           <p className="font-medium text-foreground">
                             {user.name}
                           </p>
-                          <Badge className="badge-primary mt-1">
-                            {user.store_username}
-                          </Badge>
+                          <div className="flex items-center gap-1 mt-1">
+                            <Badge className="badge-primary">
+                              {user.store_username}
+                            </Badge>
+                            <button
+                              onClick={() => copyToClipboard(user.store_username, 'Store username')}
+                              className="text-gray-400 hover:text-primary transition-colors cursor-pointer"
+                              title="Copy store username"
+                            >
+                              <Copy className="h-3 w-3" />
+                            </button>
+                          </div>
                         </div>
                       </div>
 
                       <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
+                        <div className="flex justify-between items-center">
                           <span className="text-muted-foreground">Email:</span>
-                          <span className="text-foreground">
-                            {user.email || 'N/A'}
-                          </span>
+                          <div className="flex items-center gap-1">
+                            <span className="text-foreground">
+                              {user.email || 'N/A'}
+                            </span>
+                            {user.email && (
+                              <button
+                                onClick={() => copyToClipboard(user.email!, 'Email')}
+                                className="text-gray-400 hover:text-primary transition-colors cursor-pointer"
+                                title="Copy email"
+                              >
+                                <Copy className="h-3 w-3" />
+                              </button>
+                            )}
+                          </div>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">

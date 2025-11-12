@@ -60,6 +60,7 @@ export default function EditUserPage({
           currency: user.currency,
           bio: user.bio || '',
           profile_image: user.profile_image || '',
+          address: user.address || '',
         })
       } catch (error) {
         console.error('Failed to load user:', error)
@@ -226,6 +227,17 @@ export default function EditUserPage({
                 rows={4}
                 maxLength={500}
                 description="Maximum 500 characters"
+              />
+
+              <FormTextarea
+                label="Address"
+                name="address"
+                placeholder="Enter full address..."
+                register={register}
+                error={errors.address}
+                rows={3}
+                maxLength={500}
+                description="Full address (minimum 10 characters)"
               />
 
               <FormImageUpload

@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { getProducts, deleteProduct, getProductStats } from '@/actions'
+import { getOrders, getOrderStats } from '@/actions'
 import { Button } from '@/_components/ui/button'
 import { Input } from '@/_components/ui/input'
 import {
@@ -14,14 +14,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/_components/ui/table'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/_components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,106 +34,100 @@ import {
   MoreVertical,
   Eye,
   Pencil,
-  Trash2,
-  Plus,
-  Package,
-  ShoppingCart,
-  AlertCircle,
-  Box,
+  ShoppingBag,
+  CheckCircle,
+  Clock,
+  Truck,
+  XCircle,
+  DollarSign,
   Copy,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
-import type { ProductWithStore } from '@/types'
-import { PRODUCT_CATEGORIES } from '@/lib/validations/product'
+import type { OrderWithDetails } from '@/types'
+import { ORDER_STATUSES } from '@/lib/validations/order'
 import { formatPrice } from '@/lib/utils/currency'
 import { copyToClipboard } from '@/lib/utils/clipboard'
 import Image from 'next/image'
 
-export default function ProductsPage() {
+export default function OrdersPage() {
   const router = useRouter()
-  const [products, setProducts] = useState<ProductWithStore[]>([])
+  const [orders, setOrders] = useState<OrderWithDetails[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState<string>('')
   const [statusFilter, setStatusFilter] = useState<string>('')
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [selectedProduct, setSelectedProduct] = useState<ProductWithStore | null>(
-    null
-  )
-  const [deleting, setDeleting] = useState(false)
   const [stats, setStats] = useState({
     total: 0,
-    available: 0,
-    outOfStock: 0,
-    totalInventory: 0,
+    pending: 0,
+    processing: 0,
+    shipped: 0,
+    delivered: 0,
+    cancelled: 0,
+    refunded: 0,
+    totalRevenue: 0,
   })
 
-  const fetchProducts = async () => {
+  const fetchOrders = async () => {
     try {
       setLoading(true)
-      const { data } = await getProducts({
-        category: categoryFilter || undefined,
+      const { data } = await getOrders({
         status: statusFilter || undefined,
         search: searchQuery || undefined,
       })
-      setProducts(data)
+      setOrders(data)
 
       // Fetch stats
-      const productStats = await getProductStats()
-      setStats(productStats)
+      const orderStats = await getOrderStats()
+      setStats(orderStats)
     } catch (error) {
-      console.error('Failed to fetch products:', error)
-      toast.error('Failed to load products')
+      console.error('Failed to fetch orders:', error)
+      toast.error('Failed to load orders')
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchProducts()
-  }, [categoryFilter, statusFilter])
+    fetchOrders()
+  }, [statusFilter])
 
   const handleSearch = () => {
-    fetchProducts()
+    fetchOrders()
   }
 
-  const handleDeleteClick = (product: ProductWithStore) => {
-    setSelectedProduct(product)
-    setIsDeleteModalOpen(true)
-  }
+  const filteredOrders = useMemo(() => {
+    if (!searchQuery.trim()) return orders
+    const query = searchQuery.toLowerCase()
+    return orders.filter(
+      (order) =>
+        order.order_code?.toLowerCase().includes(query) ||
+        order.buyer_name.toLowerCase().includes(query) ||
+        order.buyer_email.toLowerCase().includes(query) ||
+        order.transaction_code.toLowerCase().includes(query)
+    )
+  }, [orders, searchQuery])
 
-  const handleDeleteConfirm = async () => {
-    if (!selectedProduct) return
-
-    setDeleting(true)
-    try {
-      const result = await deleteProduct(selectedProduct.id)
-      if (result.success) {
-        toast.success('Product deleted successfully!')
-        setIsDeleteModalOpen(false)
-        setSelectedProduct(null)
-        await fetchProducts()
-      } else {
-        toast.error(result.error || 'Failed to delete product')
-      }
-    } catch (error) {
-      console.error('Delete error:', error)
-      toast.error('An error occurred while deleting product')
-    } finally {
-      setDeleting(false)
+  const getStatusBadgeClass = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return 'bg-yellow-500 text-white'
+      case 'processing':
+        return 'bg-blue-500 text-white'
+      case 'shipped':
+        return 'bg-purple-500 text-white'
+      case 'delivered':
+        return 'badge-success'
+      case 'cancelled':
+        return 'bg-red-500 text-white'
+      case 'refunded':
+        return 'bg-gray-500 text-white'
+      default:
+        return 'bg-gray-500 text-white'
     }
   }
 
-  const filteredProducts = useMemo(() => {
-    if (!searchQuery.trim()) return products
-    const query = searchQuery.toLowerCase()
-    return products.filter(
-      (product) =>
-        product.title.toLowerCase().includes(query) ||
-        product.description?.toLowerCase().includes(query) ||
-        product.category.toLowerCase().includes(query)
-    )
-  }, [products, searchQuery])
+  const formatStatus = (status: string) => {
+    return status.charAt(0).toUpperCase() + status.slice(1)
+  }
 
   if (loading) {
     return (
@@ -149,7 +135,7 @@ export default function ProductsPage() {
         <header className="border-b border-border bg-card">
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <h1 className="font-heading text-3xl font-bold text-primary">
-              Product Management
+              Order Management
             </h1>
           </div>
         </header>
@@ -174,21 +160,15 @@ export default function ProductsPage() {
                   Dashboard
                 </Link>
                 <span>/</span>
-                <span>Products</span>
+                <span>Orders</span>
               </div>
               <h1 className="font-heading mt-1 text-3xl font-bold text-primary">
-                Product Management
+                Order Management
               </h1>
             </div>
             <div className="flex gap-3">
               <Button variant="outline" asChild>
                 <Link href="/admin">Back</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/admin/products/new">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Product
-                </Link>
               </Button>
             </div>
           </div>
@@ -202,8 +182,8 @@ export default function ProductsPage() {
           <Card className="hover-lift card-gradient-info border-0">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-white/90 flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                Total Products
+                <ShoppingBag className="h-4 w-4" />
+                Total Orders
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -213,30 +193,30 @@ export default function ProductsPage() {
             </CardContent>
           </Card>
 
-          <Card className="hover-lift card-gradient-success border-0">
+          <Card className="hover-lift card-gradient-warning border-0">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-white/90 flex items-center gap-2">
-                <ShoppingCart className="h-4 w-4" />
-                Available
+                <Clock className="h-4 w-4" />
+                Pending
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="font-heading text-4xl font-bold text-white">
-                {stats.available}
+                {stats.pending}
               </p>
             </CardContent>
           </Card>
 
-          <Card className="hover-lift card-gradient-warning border-0">
+          <Card className="hover-lift card-gradient-success border-0">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-white/90 flex items-center gap-2">
-                <AlertCircle className="h-4 w-4" />
-                Out of Stock
+                <CheckCircle className="h-4 w-4" />
+                Delivered
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="font-heading text-4xl font-bold text-white">
-                {stats.outOfStock}
+                {stats.delivered}
               </p>
             </CardContent>
           </Card>
@@ -244,24 +224,24 @@ export default function ProductsPage() {
           <Card className="hover-lift card-gradient-primary border-0">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-white/90 flex items-center gap-2">
-                <Box className="h-4 w-4" />
-                Total Inventory
+                <DollarSign className="h-4 w-4" />
+                Total Revenue
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="font-heading text-4xl font-bold text-white">
-                {stats.totalInventory}
+                {formatPrice(stats.totalRevenue, 'NPR')}
               </p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Products Table */}
+        {/* Orders Table */}
         <Card className="shadow-lg">
           <CardHeader>
             <div className="flex flex-col gap-4">
               <CardTitle className="font-heading text-2xl text-primary">
-                All Products
+                All Orders
               </CardTitle>
 
               {/* Filters */}
@@ -270,30 +250,13 @@ export default function ProductsPage() {
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                   <Input
                     type="text"
-                    placeholder="Search products..."
+                    placeholder="Search orders..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     className="pl-10"
                   />
                 </div>
-
-                <Select
-                  value={categoryFilter || 'all'}
-                  onValueChange={(value) => setCategoryFilter(value === 'all' ? '' : value)}
-                >
-                  <SelectTrigger className="w-full sm:w-48">
-                    <SelectValue placeholder="All Categories" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {PRODUCT_CATEGORIES.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
 
                 <Select
                   value={statusFilter || 'all'}
@@ -304,8 +267,11 @@ export default function ProductsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="available">Available</SelectItem>
-                    <SelectItem value="out_of_stock">Out of Stock</SelectItem>
+                    {ORDER_STATUSES.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {formatStatus(status)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -318,90 +284,106 @@ export default function ProductsPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-12">S.N</TableHead>
+                    <TableHead>Order Code</TableHead>
                     <TableHead>Product</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Stock</TableHead>
+                    <TableHead>Buyer</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Quantity</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Store</TableHead>
+                    <TableHead>Seller</TableHead>
                     <TableHead className="w-16">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredProducts.length === 0 ? (
+                  {filteredOrders.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-8">
+                      <TableCell colSpan={9} className="text-center py-8">
                         <p className="text-muted-foreground">
-                          {searchQuery || categoryFilter || statusFilter
-                            ? 'No products found matching your filters'
-                            : 'No products found'}
+                          {searchQuery || statusFilter
+                            ? 'No orders found matching your filters'
+                            : 'No orders found'}
                         </p>
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredProducts.map((product, index) => (
-                      <TableRow key={product.id}>
+                    filteredOrders.map((order, index) => (
+                      <TableRow key={order.id}>
                         <TableCell className="font-medium">
                           {index + 1}
                         </TableCell>
                         <TableCell>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-foreground">
+                              {order.order_code || 'N/A'}
+                            </p>
+                            {order.order_code && (
+                              <button
+                                onClick={() => copyToClipboard(order.order_code!, 'Order code')}
+                                className="text-gray-400 hover:text-primary transition-colors cursor-pointer"
+                                title="Copy order code"
+                              >
+                                <Copy className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
                           <div className="flex items-center gap-3">
-                            <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-muted">
-                              <Image
-                                src={product.cover_image}
-                                alt={product.title}
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
+                            {order.product?.cover_image && (
+                              <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-muted">
+                                <Image
+                                  src={order.product.cover_image}
+                                  alt={order.product.title || 'Product'}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                            )}
                             <div className="max-w-[200px]">
                               <p className="font-medium text-foreground truncate">
-                                {product.title}
-                              </p>
-                              <p className="text-xs text-muted-foreground truncate">
-                                {product.description || 'No description'}
+                                {order.product?.title || 'Unknown Product'}
                               </p>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline">{product.category}</Badge>
+                          <div>
+                            <p className="font-medium text-foreground">
+                              {order.buyer_name}
+                            </p>
+                            <div className="flex items-center gap-1">
+                              <p className="text-xs text-muted-foreground">
+                                {order.buyer_email}
+                              </p>
+                              <button
+                                onClick={() => copyToClipboard(order.buyer_email, 'Email')}
+                                className="text-gray-400 hover:text-primary transition-colors cursor-pointer"
+                                title="Copy email"
+                              >
+                                <Copy className="h-3 w-3" />
+                              </button>
+                            </div>
+                          </div>
                         </TableCell>
                         <TableCell className="font-semibold">
-                          {formatPrice(product.price, product.store?.currency || 'USD')}
+                          {formatPrice(order.amount, order.seller?.currency || 'NPR')}
                         </TableCell>
                         <TableCell>
-                          <span
-                            className={
-                              product.availability_count === 0
-                                ? 'text-destructive font-medium'
-                                : 'text-foreground'
-                            }
-                          >
-                            {product.availability_count}
-                          </span>
+                          {order.quantity}
                         </TableCell>
                         <TableCell>
-                          <Badge
-                            className={
-                              product.status === 'available'
-                                ? 'badge-success'
-                                : 'bg-red-500 text-white'
-                            }
-                          >
-                            {product.status === 'available'
-                              ? 'Available'
-                              : 'Out of Stock'}
+                          <Badge className={getStatusBadgeClass(order.status)}>
+                            {formatStatus(order.status)}
                           </Badge>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Badge className="badge-primary">
-                              {product.store?.store_username || 'Unknown'}
+                              {order.seller?.store_username || 'Unknown'}
                             </Badge>
-                            {product.store?.store_username && (
+                            {order.seller?.store_username && (
                               <button
-                                onClick={() => copyToClipboard(product.store!.store_username, 'Store username')}
+                                onClick={() => copyToClipboard(order.seller!.store_username, 'Store username')}
                                 className="text-gray-400 hover:text-primary transition-colors cursor-pointer"
                                 title="Copy store username"
                               >
@@ -421,7 +403,7 @@ export default function ProductsPage() {
                               <DropdownMenuItem
                                 onClick={() =>
                                   router.push(
-                                    `/admin/products/${product.id}/details`
+                                    `/admin/orders/${order.id}/details`
                                   )
                                 }
                                 className="cursor-pointer focus:bg-blue-50 focus:text-blue-700"
@@ -432,20 +414,13 @@ export default function ProductsPage() {
                               <DropdownMenuItem
                                 onClick={() =>
                                   router.push(
-                                    `/admin/products/${product.id}/edit`
+                                    `/admin/orders/${order.id}/edit`
                                   )
                                 }
                                 className="cursor-pointer focus:bg-secondary/10 focus:text-secondary"
                               >
                                 <Pencil className="mr-2 h-4 w-4 text-secondary" />
                                 Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleDeleteClick(product)}
-                                className="cursor-pointer text-destructive focus:bg-red-50 focus:text-destructive"
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -459,76 +434,84 @@ export default function ProductsPage() {
 
             {/* Mobile Cards */}
             <div className="md:hidden space-y-4">
-              {filteredProducts.length === 0 ? (
+              {filteredOrders.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-muted-foreground">
-                    {searchQuery || categoryFilter || statusFilter
-                      ? 'No products found matching your filters'
-                      : 'No products found'}
+                    {searchQuery || statusFilter
+                      ? 'No orders found matching your filters'
+                      : 'No orders found'}
                   </p>
                 </div>
               ) : (
-                filteredProducts.map((product) => (
-                  <Card key={product.id} className="hover-lift">
+                filteredOrders.map((order) => (
+                  <Card key={order.id} className="hover-lift">
                     <CardContent className="pt-6">
                       <div className="mb-4 flex gap-3">
-                        <div className="relative h-20 w-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                          <Image
-                            src={product.cover_image}
-                            alt={product.title}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
+                        {order.product?.cover_image && (
+                          <div className="relative h-20 w-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                            <Image
+                              src={order.product.cover_image}
+                              alt={order.product.title || 'Product'}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-foreground truncate">
-                            {product.title}
+                            {order.product?.title || 'Unknown Product'}
                           </p>
-                          <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                            {product.description || 'No description'}
-                          </p>
+                          <div className="flex items-center gap-1 mt-1">
+                            <p className="text-sm text-muted-foreground">
+                              Order: {order.order_code || 'N/A'}
+                            </p>
+                            {order.order_code && (
+                              <button
+                                onClick={() => copyToClipboard(order.order_code!, 'Order code')}
+                                className="text-gray-400 hover:text-primary transition-colors cursor-pointer"
+                                title="Copy order code"
+                              >
+                                <Copy className="h-3 w-3" />
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
 
                       <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">
-                            Category:
-                          </span>
-                          <Badge variant="outline">{product.category}</Badge>
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted-foreground">Buyer:</span>
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium text-foreground">
+                              {order.buyer_name}
+                            </span>
+                            <button
+                              onClick={() => copyToClipboard(order.buyer_email, 'Email')}
+                              className="text-gray-400 hover:text-primary transition-colors"
+                              title="Copy email"
+                            >
+                              <Copy className="h-3 w-3" />
+                            </button>
+                          </div>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Price:</span>
+                          <span className="text-muted-foreground">Amount:</span>
                           <span className="font-semibold text-foreground">
-                            {formatPrice(product.price, product.store?.currency || 'USD')}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Stock:</span>
-                          <span
-                            className={
-                              product.availability_count === 0
-                                ? 'text-destructive font-medium'
-                                : 'text-foreground'
-                            }
-                          >
-                            {product.availability_count}
+                            {formatPrice(order.amount, order.seller?.currency || 'NPR')}
                           </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">
-                            Status:
+                            Quantity:
                           </span>
-                          <Badge
-                            className={
-                              product.status === 'available'
-                                ? 'badge-success'
-                                : 'bg-red-500 text-white'
-                            }
-                          >
-                            {product.status === 'available'
-                              ? 'Available'
-                              : 'Out of Stock'}
+                          <span className="text-foreground">
+                            {order.quantity}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Status:</span>
+                          <Badge className={getStatusBadgeClass(order.status)}>
+                            {formatStatus(order.status)}
                           </Badge>
                         </div>
                       </div>
@@ -539,7 +522,7 @@ export default function ProductsPage() {
                           size="sm"
                           className="flex-1"
                           onClick={() =>
-                            router.push(`/admin/products/${product.id}/details`)
+                            router.push(`/admin/orders/${order.id}/details`)
                           }
                         >
                           <Eye className="mr-2 h-4 w-4" />
@@ -550,18 +533,11 @@ export default function ProductsPage() {
                           size="sm"
                           className="flex-1"
                           onClick={() =>
-                            router.push(`/admin/products/${product.id}/edit`)
+                            router.push(`/admin/orders/${order.id}/edit`)
                           }
                         >
                           <Pencil className="mr-2 h-4 w-4" />
                           Edit
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleDeleteClick(product)}
-                        >
-                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </CardContent>
@@ -572,36 +548,6 @@ export default function ProductsPage() {
           </CardContent>
         </Card>
       </main>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Product</DialogTitle>
-            <DialogDescription>
-              {selectedProduct
-                ? `Are you sure you want to delete "${selectedProduct.title}"? This action cannot be undone and will remove all product data.`
-                : 'Are you sure you want to delete this product?'}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteModalOpen(false)}
-              disabled={deleting}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteConfirm}
-              disabled={deleting}
-            >
-              {deleting ? 'Deleting...' : 'Delete'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
