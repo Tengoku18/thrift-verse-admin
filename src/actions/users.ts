@@ -262,7 +262,19 @@ export async function createUser(params: CreateUserParams) {
       })
 
     if (authError) {
-      console.error('Error creating auth user:', authError)
+      const errorDetails = authError as unknown as {
+        code?: string
+        details?: string
+        hint?: string
+      }
+      console.error('Error creating auth user:', {
+        message: authError.message,
+        status: authError.status,
+        code: errorDetails.code,
+        details: errorDetails.details,
+        hint: errorDetails.hint,
+        fullError: JSON.stringify(authError, null, 2)
+      })
       return { success: false, error: authError.message }
     }
 
